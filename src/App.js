@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import Note from './components/Note'
 
-const App = ({ notes } ) => {
+const App = (props) => {
+  console.log(props.notes);
+const [notes, setNotes] = useState(props.notes);
+
   return (
     <div>
       <h1>Notes</h1>
