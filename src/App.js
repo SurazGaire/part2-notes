@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Note from "./components/Note";
-
-import axios from "axios";
+import noteService from "./services/notes";
 
 const App = () => {
 	const [notes, setNotes] = useState([]);
@@ -12,9 +11,8 @@ const App = () => {
 
 	useEffect(() => {
 		console.log("effect");
-		axios.get("http://localhost:3001/notes").then((response) => {
-			console.log("fulfilled");
-			setNotes(response.data);
+		noteService.getAll().then((initialNotes) => {
+			setNotes(initialNotes);
 		});
 	}, []);
 
@@ -30,10 +28,20 @@ const App = () => {
 			important: Math.random() < 0.5,
 		};
 
-		axios.post("http://localhost:3001/notes/", newObject).then((response) => {
-			console.log(response);
-			setNotes(notes.concat(response.data));
+		noteService.create(newObject).then((returnedNote) => {
+			setNotes(notes.concat(returnedNote));
 			setNewNote("");
+		});
+	};
+
+	const toggleImportanceOf = (id) => {
+		console.log(`Importance of id ${id} needs to be toggled`);
+
+		const note = notes.find((note) => note.id === id);
+		const changedNote = { ...note, important: !note.important };
+
+		noteService.update(id, changedNote).then((returnedNote) => {
+			setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)));
 		});
 	};
 
@@ -50,7 +58,11 @@ const App = () => {
 			</button>
 			<ul>
 				{notesToShow.map((note) => (
-					<Note key={note.id} note={note} />
+					<Note
+						key={note.id}
+						note={note}
+						toggleImportance={() => toggleImportanceOf(note.id)}
+					/>
 				))}
 			</ul>
 			<form onSubmit={addNote}>
