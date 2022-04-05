@@ -28,10 +28,13 @@ const App = () => {
 			content: newNote,
 			date: new Date().toISOString(),
 			important: Math.random() < 0.5,
-			id: notes.length + 1,
 		};
-		setNotes(notes.concat(newObject));
-		setNewNote("");
+
+		axios.post("http://localhost:3001/notes/", newObject).then((response) => {
+			console.log(response);
+			setNotes(notes.concat(response.data));
+			setNewNote("");
+		});
 	};
 
 	const handleNoteChange = (e) => {
