@@ -9,6 +9,8 @@ const App = () => {
 
 	const [showAll, setShowAll] = useState(true);
 
+	const [errorMesssage, setErrorMessage] = useState(null);
+
 	useEffect(() => {
 		console.log("effect");
 		noteService.getAll().then((initialNotes) => {
@@ -19,6 +21,14 @@ const App = () => {
 	console.log("render", notes.length, "notes");
 
 	const notesToShow = showAll ? notes : notes.filter((note) => note.important);
+
+	const Notification = ({ message }) => {
+		if (message === null) {
+			return null;
+		}
+
+		return <div className="error">{message}</div>;
+	};
 
 	const addNote = (event) => {
 		event.preventDefault();
@@ -46,9 +56,12 @@ const App = () => {
 				setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)));
 			})
 			.catch((error) => {
-				alert(
-					`The note ${note.content} has already been deleted from the list.`
+				setErrorMessage(
+					`Note : [ ${note.content} ] was already removed from server`
 				);
+				setTimeout(() => {
+					setErrorMessage(null);
+				}, 5000);
 				setNotes(notes.filter((n) => n.id !== id));
 			});
 	};
@@ -61,6 +74,7 @@ const App = () => {
 	return (
 		<div>
 			<h1>Notes</h1>
+			<Notification message={errorMesssage} />
 			<button onClick={() => setShowAll(!showAll)}>
 				Show {showAll ? "important" : "all"}
 			</button>
