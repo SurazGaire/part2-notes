@@ -29,6 +29,18 @@
       "date": "2022-04-05T09:42:44.615Z",
       "important": true,
       "id": 5
+    },
+    {
+      "content": "This is a test post ",
+      "date": "2022-04-05T16:00:21.666Z",
+      "important": false,
+      "id": 6
+    },
+    {
+      "content": "This is the new post trial",
+      "date": "2022-04-07T05:50:21.089Z",
+      "important": false,
+      "id": 7
     }
   ]
 }

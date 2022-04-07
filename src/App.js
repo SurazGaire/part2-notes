@@ -40,9 +40,17 @@ const App = () => {
 		const note = notes.find((note) => note.id === id);
 		const changedNote = { ...note, important: !note.important };
 
-		noteService.update(id, changedNote).then((returnedNote) => {
-			setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)));
-		});
+		noteService
+			.update(id, changedNote)
+			.then((returnedNote) => {
+				setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)));
+			})
+			.catch((error) => {
+				alert(
+					`The note ${note.content} has already been deleted from the list.`
+				);
+				setNotes(notes.filter((n) => n.id !== id));
+			});
 	};
 
 	const handleNoteChange = (e) => {
