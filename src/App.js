@@ -23,6 +23,15 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      noteService.setToken(user.token);
+    }
+  }, []);
+
   console.log("render", notes.length, "notes");
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
@@ -57,6 +66,9 @@ const App = () => {
 
     try {
       const user = await loginService.login({ username, password });
+      window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
+      noteService.setToken(user.token);
+      console.log(user);
       setUser(user);
       setUsername("");
       setPassword("");
@@ -110,10 +122,10 @@ const App = () => {
     setNewNote(e.target.value);
   };
 
-  const loginForm = () => {
+  const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
-        Username
+        username
         <input
           type="text"
           value={username}
@@ -131,15 +143,15 @@ const App = () => {
         />
       </div>
       <button type="submit">login</button>
-    </form>;
-  };
+    </form>
+  );
 
-  const noteForm = () => {
+  const noteForm = () => (
     <form onSubmit={addNote}>
       <input value={newNote} onChange={handleNoteChange} />
       <button type="submit">Save</button>
-    </form>;
-  };
+    </form>
+  );
 
   return (
     <div>
