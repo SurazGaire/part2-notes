@@ -7,7 +7,6 @@ const App = () => {
   const [notes, setNotes] = useState([]);
 
   const [newNote, setNewNote] = useState("");
-
   const [showAll, setShowAll] = useState(true);
 
   const [username, setUsername] = useState("");
