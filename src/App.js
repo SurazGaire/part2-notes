@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Note from "./components/Note";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
@@ -18,6 +18,8 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const [errorMesssage, setErrorMessage] = useState(null);
+
+  const noteFormRef = useRef();
 
   useEffect(() => {
     console.log("effect");
@@ -83,15 +85,16 @@ const App = () => {
     }
   };
 
+  const toggleImportanceOf = (id) => {
+    const note = notes.find((n) => n.id === id);
+    const changedNote = { ...note, important: !note.important };
+  };
+
   const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility();
     noteService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote));
     });
-  };
-
-  const handleNoteChange = (e) => {
-    console.log(e.target.value);
-    setNewNote(e.target.value);
   };
 
   return (
@@ -111,9 +114,10 @@ const App = () => {
       ) : (
         <div>
           <p>{user.name} logged in</p>
-          <Togglable buttonLabel="new note">
+          <Togglable buttonLabel="new note" ref={noteFormRef}>
             <NoteForm createNote={addNote} />
           </Togglable>
+          <button onClick={() => window.localStorage.clear()}>Logout</button>
         </div>
       )}
 
