@@ -10,7 +10,6 @@ import loginService from "./services/login";
 const App = () => {
   const [notes, setNotes] = useState([]);
 
-  const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
 
   const [username, setUsername] = useState("");
@@ -90,11 +89,11 @@ const App = () => {
     const changedNote = { ...note, important: !note.important };
   };
 
-  const addNote = (noteObject) => {
+  const addNote = async (noteObject) => {
     noteFormRef.current.toggleVisibility();
-    noteService.create(noteObject).then((returnedNote) => {
-      setNotes(notes.concat(returnedNote));
-    });
+    const returnedNote = await noteService.create(noteObject);
+    setNotes(notes.concat(returnedNote));
+    console.log(returnedNote);
   };
 
   return (
@@ -114,7 +113,7 @@ const App = () => {
       ) : (
         <div>
           <p>{user.name} logged in</p>
-          <Togglable buttonLabel="new note" ref={noteFormRef}>
+          <Togglable buttonLabel="Create Note" ref={noteFormRef}>
             <NoteForm createNote={addNote} />
           </Togglable>
           <button onClick={() => window.localStorage.clear()}>Logout</button>
