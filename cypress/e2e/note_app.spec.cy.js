@@ -9,6 +9,7 @@ describe("Note app", function () {
     cy.request("POST", "http://localhost:3001/api/users/", user);
     cy.visit("http://localhost:3000");
   });
+
   it("front page can be opened", function () {
     cy.contains("Notes");
     cy.contains("Note app, Bootcamp fellowship at Tej fellowship");
@@ -23,12 +24,18 @@ describe("Note app", function () {
     cy.get("#login-button").click();
     cy.contains("Matti Luukkainen logged in");
   });
+  it("login fails with wrong password", function () {
+    cy.contains("Login").click();
+    cy.get("#username").type("mluukkai");
+    cy.get("#password").type("wrong");
+    cy.get("#login-button").click();
+
+    // cy.get(".error").should("contain", "Wrong Credentials");
+    cy.get("html").should("not.contain", "Matti Luukkainen logged in");
+  });
   describe("when logged in", function () {
     beforeEach(function () {
-      cy.contains("Login").click();
-      cy.get("input:first").type("mluukkai");
-      cy.get("input:last").type("salainen");
-      cy.get("#login-button").click();
+      cy.login({ username: "mluukkai", password: "salainen" });
     });
 
     it("a new note can be created", function () {
@@ -40,9 +47,10 @@ describe("Note app", function () {
 
     describe("and a note exists", function () {
       beforeEach(function () {
-        cy.contains("Create Note").click();
-        cy.get("input").type("another note cypress");
-        cy.contains("save").click();
+        cy.createNote({
+          content: "another note cypress",
+          important: false,
+        });
       });
 
       it("it can be made important", function () {
